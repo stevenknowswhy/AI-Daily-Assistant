@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { OnboardingStep } from '../../data/enums';
 import ModernWelcomeScreen from './screens/ModernWelcomeScreen';
 import ModernOnboardingLayout from './ModernOnboardingLayout';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 import { googleOAuthService } from '../../services/googleOAuth';
 import { supabaseService } from '../../services/supabaseService';
 
