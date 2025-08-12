@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/ClerkAuthContext';
+import { useAuth } from '../../contexts/ClerkAuthContext';
 import { useDashboard } from '@/hooks/useDashboard';
 import { useDashboardState } from '@/hooks/useDashboardState';
 import { useConnectionStatus } from '@/hooks/useConnectionStatus';
