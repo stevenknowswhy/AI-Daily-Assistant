@@ -11,9 +11,32 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      "@": path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src")
-    }
+    alias: [
+      {
+        find: "@",
+        replacement: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src")
+      },
+      {
+        find: "@/components",
+        replacement: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src/components")
+      },
+      {
+        find: "@/contexts",
+        replacement: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src/contexts")
+      },
+      {
+        find: "@/lib",
+        replacement: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src/lib")
+      },
+      {
+        find: "@/hooks",
+        replacement: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src/hooks")
+      },
+      {
+        find: "@/features",
+        replacement: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src/features")
+      }
+    ]
   },
   test: {
     globals: true,
