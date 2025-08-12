@@ -15,7 +15,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '../../ui/alert-dialog';
 import toast from 'react-hot-toast';
 
 interface EmailMessage {

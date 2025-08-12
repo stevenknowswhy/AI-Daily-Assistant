@@ -16,7 +16,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '../../ui/alert-dialog';
 import { CalendarWidgetProps } from '../../../types/dashboard';
 import toast from 'react-hot-toast';
 
