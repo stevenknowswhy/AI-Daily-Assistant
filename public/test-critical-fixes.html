@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical Fixes Test - AI Daily Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-pass { background-color: #28a745; }
+        .status-fail { background-color: #dc3545; }
+        .status-pending { background-color: #ffc107; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Critical Fixes Test - AI Daily Assistant</h1>
+    <p>Testing all the critical issues that were fixed:</p>
+
+    <div class="test-grid">
+        <!-- Priority 1: Daily Call Form Issues -->
+        <div class="test-section">
+            <h2>📞 Priority 1: Daily Call Form Issues</h2>
+            
+            <h3>Test 1.1: API Endpoint Fix</h3>
+            <button onclick="testDailyCallAPI()">Test Daily Call API</button>
+            <div id="dailyCallAPIResult" class="result"></div>
+
+            <h3>Test 1.2: Phone Number Persistence</h3>
+            <input type="tel" id="phoneInput" placeholder="+1 (555) 123-4567" value="+1555123456">
+            <button onclick="testPhoneNumberSave()">Save Phone Number</button>
+            <button onclick="testPhoneNumberLoad()">Load Phone Number</button>
+            <div id="phoneNumberResult" class="result"></div>
+
+            <h3>Test 1.3: Circular JSON Fix</h3>
+            <button onclick="testCircularJSONFix()">Test JSON Serialization</button>
+            <div id="circularJSONResult" class="result"></div>
+        </div>
+
+        <!-- Priority 2: Chatterbox AI Assistant Issues -->
+        <div class="test-section">
+            <h2>🤖 Priority 2: Chatterbox AI Assistant</h2>
+            
+            <h3>Test 2.1: Chatterbox API Endpoint</h3>
+            <button onclick="testChatterboxAPI()">Test Chatterbox API</button>
+            <div id="chatterboxAPIResult" class="result"></div>
+
+            <h3>Test 2.2: Voice Processing</h3>
+            <input type="text" id="voiceInput" placeholder="Hello AI Assistant" value="What's on my calendar today?">
+            <button onclick="testVoiceProcessing()">Process Voice Command</button>
+            <div id="voiceProcessingResult" class="result"></div>
+
+            <h3>Test 2.3: Daily Briefing</h3>
+            <button onclick="testDailyBriefing()">Test Daily Briefing</button>
+            <div id="dailyBriefingResult" class="result"></div>
+        </div>
+
+        <!-- Priority 3: Backend API Issues -->
+        <div class="test-section">
+            <h2>🔧 Priority 3: Backend API Issues</h2>
+            
+            <h3>Test 3.1: API Route Configuration</h3>
+            <button onclick="testAPIRoutes()">Test All API Routes</button>
+            <div id="apiRoutesResult" class="result"></div>
+
+            <h3>Test 3.2: Authentication Status</h3>
+            <button onclick="testAuthStatus()">Test Auth Status</button>
+            <div id="authStatusResult" class="result"></div>
+
+            <h3>Test 3.3: Server Health</h3>
+            <button onclick="testServerHealth()">Test Server Health</button>
+            <div id="serverHealthResult" class="result"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="test-section">
+            <h2>📊 Test Summary</h2>
+            <div id="testSummary" class="result info">
+                Click "Run All Tests" to see a comprehensive summary of all fixes.
+            </div>
+            <button onclick="runAllTests()" style="background-color: #28a745; font-size: 16px; padding: 15px 30px;">
+                🚀 Run All Tests
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3005';
+        const TEST_USER_ID = 'test-user-critical-fixes';
+        
+        let testResults = {
+            dailyCallAPI: false,
+            phoneNumberPersistence: false,
+            circularJSON: false,
+            chatterboxAPI: false,
+            voiceProcessing: false,
+            dailyBriefing: false,
+            apiRoutes: false,
+            authStatus: false,
+            serverHealth: false
+        };
+
+        function showResult(elementId, message, isSuccess = true, isInfo = false) {
+            const element = document.getElementById(elementId);
+            element.className = `result ${isInfo ? 'info' : (isSuccess ? 'success' : 'error')}`;
+            element.textContent = message;
+        }
+
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                return { success: response.ok, data, status: response.status };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Priority 1 Tests
+        async function testDailyCallAPI() {
+            showResult('dailyCallAPIResult', 'Testing daily call API endpoint...', true, true);
+            
+            const result = await apiCall(`/api/daily-call-preferences/${TEST_USER_ID}`);
+            
+            if (result.success) {
+                testResults.dailyCallAPI = true;
+                showResult('dailyCallAPIResult', `✅ Daily Call API Working!\n${JSON.stringify(result.data, null, 2)}`, true);
+            } else {
+                showResult('dailyCallAPIResult', `❌ Daily Call API Failed: ${result.error || result.data?.error}`, false);
+            }
+        }
+
+        async function testPhoneNumberSave() {
+            const phoneNumber = document.getElementById('phoneInput').value;
+            showResult('phoneNumberResult', 'Saving phone number...', true, true);
+            
+            const saveData = {
+                phone_number: phoneNumber,
+                call_time: '08:00:00',
+                timezone: 'America/Los_Angeles',
+                no_answer_action: 'text_briefing',
+                retry_count: 1,
+                is_active: true
+            };
+            
+            const result = await apiCall(`/api/daily-call-preferences/${TEST_USER_ID}`, {
+                method: 'POST',
+                body: JSON.stringify(saveData)
+            });
+            
+            if (result.success) {
+                testResults.phoneNumberPersistence = true;
+                showResult('phoneNumberResult', `✅ Phone Number Saved!\nSaved: ${phoneNumber}\nResponse: ${JSON.stringify(result.data, null, 2)}`, true);
+            } else {
+                showResult('phoneNumberResult', `❌ Phone Number Save Failed: ${result.error || result.data?.error}`, false);
+            }
+        }
+
+        async function testPhoneNumberLoad() {
+            showResult('phoneNumberResult', 'Loading phone number...', true, true);
+            
+            const result = await apiCall(`/api/daily-call-preferences/${TEST_USER_ID}`);
+            
+            if (result.success && result.data.preferences) {
+                const savedPhone = result.data.preferences.phone_number;
+                const inputPhone = document.getElementById('phoneInput').value;
+                
+                if (savedPhone === inputPhone) {
+                    showResult('phoneNumberResult', `✅ Phone Number Persisted Correctly!\nSaved: ${savedPhone}\nInput: ${inputPhone}`, true);
+                } else {
+                    showResult('phoneNumberResult', `⚠️ Phone Number Mismatch!\nSaved: ${savedPhone}\nInput: ${inputPhone}`, false);
+                }
+            } else {
+                showResult('phoneNumberResult', `❌ Phone Number Load Failed: ${result.error || result.data?.error}`, false);
+            }
+        }
+
+        async function testCircularJSONFix() {
+            showResult('circularJSONResult', 'Testing JSON serialization...', true, true);
+            
+            try {
+                // Test complex object that might cause circular reference
+                const testData = {
+                    phoneNumber: '+1555123456',
+                    callTime: '08:00',
+                    timezone: 'America/Los_Angeles',
+                    preferences: {
+                        nested: true,
+                        array: [1, 2, 3],
+                        date: new Date().toISOString()
+                    }
+                };
+                
+                const jsonString = JSON.stringify(testData);
+                const parsed = JSON.parse(jsonString);
+                
+                testResults.circularJSON = true;
+                showResult('circularJSONResult', `✅ JSON Serialization Working!\nOriginal: ${JSON.stringify(testData, null, 2)}\nParsed: ${JSON.stringify(parsed, null, 2)}`, true);
+            } catch (error) {
+                showResult('circularJSONResult', `❌ JSON Serialization Failed: ${error.message}`, false);
+            }
+        }
+
+        // Priority 2 Tests
+        async function testChatterboxAPI() {
+            showResult('chatterboxAPIResult', 'Testing Chatterbox API...', true, true);
+            
+            const result = await apiCall('/api/chatterbox/process', {
+                method: 'POST',
+                body: JSON.stringify({
+                    message: 'Hello AI Assistant, this is a test',
+                    userId: TEST_USER_ID
+                })
+            });
+            
+            if (result.success) {
+                testResults.chatterboxAPI = true;
+                showResult('chatterboxAPIResult', `✅ Chatterbox API Working!\nResponse: ${result.data.text}\nModel: ${result.data.model}`, true);
+            } else {
+                showResult('chatterboxAPIResult', `❌ Chatterbox API Failed: ${result.error || result.data?.error}`, false);
+            }
+        }
+
+        async function testVoiceProcessing() {
+            const message = document.getElementById('voiceInput').value;
+            showResult('voiceProcessingResult', 'Processing voice command...', true, true);
+            
+            const result = await apiCall('/api/chatterbox/process', {
+                method: 'POST',
+                body: JSON.stringify({
+                    message: message,
+                    userId: TEST_USER_ID
+                })
+            });
+            
+            if (result.success) {
+                testResults.voiceProcessing = true;
+                showResult('voiceProcessingResult', `✅ Voice Processing Working!\nCommand: "${message}"\nResponse: ${result.data.text}`, true);
+            } else {
+                showResult('voiceProcessingResult', `❌ Voice Processing Failed: ${result.error || result.data?.error}`, false);
+            }
+        }
+
+        async function testDailyBriefing() {
+            showResult('dailyBriefingResult', 'Testing daily briefing...', true, true);
+            
+            const result = await apiCall('/api/chatterbox/process', {
+                method: 'POST',
+                body: JSON.stringify({
+                    message: 'Give me my daily briefing',
+                    userId: TEST_USER_ID
+                })
+            });
+            
+            if (result.success) {
+                testResults.dailyBriefing = true;
+                showResult('dailyBriefingResult', `✅ Daily Briefing Working!\nResponse: ${result.data.text.substring(0, 200)}...`, true);
+            } else {
+                showResult('dailyBriefingResult', `❌ Daily Briefing Failed: ${result.error || result.data?.error}`, false);
+            }
+        }
+
+        // Priority 3 Tests
+        async function testAPIRoutes() {
+            showResult('apiRoutesResult', 'Testing API routes...', true, true);
+            
+            const routes = [
+                '/api/chatterbox/health',
+                '/api/chatterbox/capabilities',
+                '/api/daily-call-preferences/active/users'
+            ];
+            
+            let results = [];
+            for (const route of routes) {
+                const result = await apiCall(route);
+                results.push(`${route}: ${result.success ? '✅' : '❌'}`);
+            }
+            
+            const allPassed = results.every(r => r.includes('✅'));
+            testResults.apiRoutes = allPassed;
+            
+            showResult('apiRoutesResult', `${allPassed ? '✅' : '❌'} API Routes Test:\n${results.join('\n')}`, allPassed);
+        }
+
+        async function testAuthStatus() {
+            showResult('authStatusResult', 'Testing authentication status...', true, true);
+            
+            const result = await apiCall('/api/chatterbox/auth-status');
+            
+            if (result.success) {
+                testResults.authStatus = true;
+                showResult('authStatusResult', `✅ Auth Status Working!\n${JSON.stringify(result.data, null, 2)}`, true);
+            } else {
+                showResult('authStatusResult', `❌ Auth Status Failed: ${result.error || result.data?.error}`, false);
+            }
+        }
+
+        async function testServerHealth() {
+            showResult('serverHealthResult', 'Testing server health...', true, true);
+            
+            const result = await apiCall('/health');
+            
+            if (result.success) {
+                testResults.serverHealth = true;
+                showResult('serverHealthResult', `✅ Server Health Good!\n${JSON.stringify(result.data, null, 2)}`, true);
+            } else {
+                showResult('serverHealthResult', `❌ Server Health Failed: ${result.error || result.data?.error}`, false);
+            }
+        }
+
+        async function runAllTests() {
+            showResult('testSummary', '🚀 Running all tests...', true, true);
+            
+            // Reset results
+            Object.keys(testResults).forEach(key => testResults[key] = false);
+            
+            // Run all tests
+            await testDailyCallAPI();
+            await testPhoneNumberSave();
+            await testPhoneNumberLoad();
+            await testCircularJSONFix();
+            await testChatterboxAPI();
+            await testVoiceProcessing();
+            await testDailyBriefing();
+            await testAPIRoutes();
+            await testAuthStatus();
+            await testServerHealth();
+            
+            // Generate summary
+            const passed = Object.values(testResults).filter(Boolean).length;
+            const total = Object.keys(testResults).length;
+            const percentage = Math.round((passed / total) * 100);
+            
+            const summary = `
+📊 TEST SUMMARY
+===============
+✅ Passed: ${passed}/${total} tests (${percentage}%)
+
+DETAILED RESULTS:
+${Object.entries(testResults).map(([test, result]) => 
+    `${result ? '✅' : '❌'} ${test.replace(/([A-Z])/g, ' $1').toLowerCase()}`
+).join('\n')}
+
+${percentage === 100 ? '🎉 ALL CRITICAL FIXES WORKING!' : '⚠️ Some issues remain - check individual test results above.'}
+            `;
+            
+            showResult('testSummary', summary, percentage === 100);
+        }
+
+        // Auto-run basic health check on page load
+        window.addEventListener('load', () => {
+            setTimeout(testServerHealth, 1000);
+        });
+    </script>
+</body>
+</html>

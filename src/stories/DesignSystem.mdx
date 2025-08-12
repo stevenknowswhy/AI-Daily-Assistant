@@ -1,0 +1,239 @@
+import { Meta, ColorPalette, ColorItem, Typeset } from '@storybook/blocks';
+
+<Meta title="Design System/Overview" />
+
+# AI Daily Assistant Design System
+
+Welcome to the AI Daily Assistant design system. This system is built with **Tailwind CSS** and features a modern **glassmorphism** aesthetic with comprehensive dark/light mode support.
+
+## Design Philosophy
+
+Our design system prioritizes:
+- **Accessibility**: WCAG 2.1 AA compliance
+- **Consistency**: Unified visual language across all components
+- **Flexibility**: Adaptable to different themes and contexts
+- **Modern Aesthetics**: Glassmorphism with subtle transparency and blur effects
+- **Performance**: Optimized for fast loading and smooth interactions
+
+## Color System
+
+### Primary Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Primary Blue"
+    subtitle="Main brand color"
+    colors={{
+      50: '#eff6ff',
+      100: '#dbeafe',
+      200: '#bfdbfe',
+      300: '#93c5fd',
+      400: '#60a5fa',
+      500: '#3b82f6',
+      600: '#2563eb',
+      700: '#1d4ed8',
+      800: '#1e40af',
+      900: '#1e3a8a',
+    }}
+  />
+</ColorPalette>
+
+### Semantic Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Success"
+    subtitle="Success states"
+    colors={{
+      50: '#f0fdf4',
+      500: '#22c55e',
+      900: '#14532d',
+    }}
+  />
+  <ColorItem
+    title="Warning"
+    subtitle="Warning states"
+    colors={{
+      50: '#fffbeb',
+      500: '#f59e0b',
+      900: '#78350f',
+    }}
+  />
+  <ColorItem
+    title="Error"
+    subtitle="Error states"
+    colors={{
+      50: '#fef2f2',
+      500: '#ef4444',
+      900: '#7f1d1d',
+    }}
+  />
+</ColorPalette>
+
+### Neutral Colors
+
+<ColorPalette>
+  <ColorItem
+    title="Gray Scale"
+    subtitle="Text and backgrounds"
+    colors={{
+      50: '#f9fafb',
+      100: '#f3f4f6',
+      200: '#e5e7eb',
+      300: '#d1d5db',
+      400: '#9ca3af',
+      500: '#6b7280',
+      600: '#4b5563',
+      700: '#374151',
+      800: '#1f2937',
+      900: '#111827',
+    }}
+  />
+</ColorPalette>
+
+## Typography
+
+<Typeset
+  fontFamily="Inter, system-ui, sans-serif"
+  fontSizes={[
+    '12px',
+    '14px',
+    '16px',
+    '18px',
+    '20px',
+    '24px',
+    '32px',
+    '40px',
+    '48px',
+  ]}
+  fontWeight={400}
+  sampleText="The quick brown fox jumps over the lazy dog"
+/>
+
+### Font Weights
+
+- **Light (300)**: Subtle text, captions
+- **Regular (400)**: Body text, descriptions
+- **Medium (500)**: Emphasized text
+- **Semibold (600)**: Headings, labels
+- **Bold (700)**: Strong emphasis, titles
+
+## Spacing System
+
+Our spacing system follows a consistent 4px base unit:
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `xs` | 4px | Tight spacing |
+| `sm` | 8px | Small gaps |
+| `md` | 16px | Default spacing |
+| `lg` | 24px | Section spacing |
+| `xl` | 32px | Large gaps |
+| `2xl` | 48px | Major sections |
+
+## Glassmorphism Effects
+
+### Background Blur
+
+```css
+backdrop-blur-sm    /* 4px blur */
+backdrop-blur-md    /* 12px blur */
+backdrop-blur-lg    /* 16px blur */
+backdrop-blur-xl    /* 24px blur */
+```
+
+### Transparency Levels
+
+```css
+bg-white/10         /* 10% opacity */
+bg-white/20         /* 20% opacity */
+bg-black/10         /* 10% black overlay */
+bg-black/20         /* 20% black overlay */
+```
+
+### Border Styles
+
+```css
+border-white/20     /* Subtle light border */
+border-white/10     /* Very subtle border */
+border-black/10     /* Dark mode borders */
+```
+
+## Component Patterns
+
+### Glass Cards
+
+Glass cards use a combination of:
+- Semi-transparent backgrounds (`bg-white/10` or `bg-black/20`)
+- Backdrop blur effects (`backdrop-blur-md`)
+- Subtle borders (`border-white/20`)
+- Soft shadows (`shadow-xl`)
+
+### Interactive States
+
+- **Hover**: Slight opacity increase (`hover:bg-white/20`)
+- **Focus**: Ring outline (`focus:ring-2 focus:ring-blue-500`)
+- **Active**: Slight scale or opacity change
+- **Disabled**: Reduced opacity (`opacity-50`)
+
+## Accessibility Guidelines
+
+### Color Contrast
+
+- Text on backgrounds must meet WCAG AA standards (4.5:1 ratio)
+- Interactive elements have clear focus indicators
+- Color is never the only way to convey information
+
+### Focus Management
+
+- All interactive elements are keyboard accessible
+- Focus indicators are clearly visible
+- Tab order follows logical flow
+
+### Screen Readers
+
+- Semantic HTML structure
+- Proper ARIA labels and descriptions
+- Alternative text for images and icons
+
+## Dark Mode Support
+
+All components automatically adapt to dark mode using CSS custom properties:
+
+```css
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  /* ... */
+}
+```
+
+## Usage Guidelines
+
+### Do's
+- Use consistent spacing from our scale
+- Apply glassmorphism effects thoughtfully
+- Ensure sufficient color contrast
+- Test in both light and dark modes
+- Follow semantic HTML practices
+
+### Don'ts
+- Don't use arbitrary spacing values
+- Don't overuse transparency effects
+- Don't rely solely on color for meaning
+- Don't ignore accessibility requirements
+- Don't mix different design patterns inconsistently
+
+## Component Library
+
+Our component library includes:
+
+- **Basic UI**: Button, Input, Card, Switch, Label
+- **Layout**: Grid, Flex utilities, Containers
+- **Navigation**: Headers, Menus, Breadcrumbs
+- **Feedback**: Alerts, Toasts, Progress indicators
+- **Data Display**: Tables, Lists, Statistics
+- **Forms**: Form controls, Validation, Layouts
+
+Each component is designed with accessibility, theming, and glassmorphism aesthetics in mind.

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twilio-OpenRouter Voice Integration Test</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 8px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #333; margin-bottom: 10px; }
+        .section { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 6px; background: #f9f9f9; }
+        .section h2 { color: #555; margin-bottom: 15px; }
+        .btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn:hover { opacity: 0.8; }
+        .input-group { margin: 10px 0; }
+        .input-group input { padding: 8px; margin-right: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .status-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .log { background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 4px; font-family: monospace; max-height: 300px; overflow-y: auto; margin-top: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📞 Twilio-OpenRouter Voice Integration Test</h1>
+            <p>Test your AI Daily Assistant voice system connectivity</p>
+        </div>
+
+        <!-- System Status -->
+        <div class="section">
+            <h2>🔍 System Status</h2>
+            <button class="btn btn-primary" id="check-health-btn">Check System Health</button>
+            <button class="btn btn-success" id="run-all-tests-btn">Run All Tests</button>
+            <div id="system-status"></div>
+        </div>
+
+        <!-- OpenRouter Tests -->
+        <div class="section">
+            <h2>🤖 OpenRouter LLM Tests</h2>
+            <button class="btn btn-primary" id="test-openrouter-btn">Test Connection</button>
+            <button class="btn btn-success" id="test-openrouter-chat-btn">Test Chat</button>
+            <div class="input-group">
+                <input type="text" id="chat-message" placeholder="Enter test message" value="Hello, how are you?">
+                <button class="btn btn-warning" id="test-custom-message-btn">Test Custom Message</button>
+            </div>
+            <div id="openrouter-status"></div>
+        </div>
+
+        <!-- Twilio Tests -->
+        <div class="section">
+            <h2>📱 Twilio Tests</h2>
+            <button class="btn btn-primary" id="test-twilio-btn">Test Connection</button>
+            <button class="btn btn-success" id="get-twilio-calls-btn">Get Recent Calls</button>
+            <div class="input-group">
+                <input type="tel" id="phone-number" placeholder="+1234567890">
+                <button class="btn btn-warning" id="make-test-call-btn">Make Test Call</button>
+            </div>
+            <div id="twilio-status"></div>
+        </div>
+
+        <!-- Webhook Tests -->
+        <div class="section">
+            <h2>🔗 Webhook Configuration</h2>
+            <button class="btn btn-primary" id="check-webhooks-btn">Check Webhook URLs</button>
+            <button class="btn btn-success" id="test-webhook-health-btn">Test Webhook Health</button>
+            <div id="webhook-status"></div>
+        </div>
+
+        <!-- Google Calendar Tests -->
+        <div class="section">
+            <h2>🗓️ Google Calendar Tests</h2>
+            <div class="calendar-auth">
+                <button class="btn btn-primary" id="test-calendar-btn">Test Connection</button>
+                <button class="btn btn-warning" id="calendar-auth-btn">Authenticate</button>
+                <div class="input-group">
+                    <input type="text" id="auth-code" placeholder="Enter OAuth code (if needed)">
+                    <button class="btn btn-info" id="submit-auth-code-btn">Submit Code</button>
+                </div>
+            </div>
+            <div class="calendar-operations">
+                <button class="btn btn-success" id="list-events-btn">Today's Events</button>
+                <button class="btn btn-info" id="list-all-events-btn">All Upcoming</button>
+                <button class="btn btn-primary" id="create-event-btn">Create Event</button>
+            </div>
+            <div class="calendar-forms" style="margin-top: 15px;">
+                <!-- Create Event Form -->
+                <div id="create-event-form" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 10px;">
+                    <h4>Create New Event</h4>
+                    <div class="form-row">
+                        <input type="text" id="event-title" placeholder="Event Title" style="width: 100%; margin-bottom: 10px;">
+                        <textarea id="event-description" placeholder="Event Description" style="width: 100%; margin-bottom: 10px; height: 60px;"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <input type="datetime-local" id="event-start" style="width: 48%; margin-right: 4%;">
+                        <input type="datetime-local" id="event-end" style="width: 48%;">
+                    </div>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <button class="btn btn-success" id="submit-create-event-btn">Create Event</button>
+                        <button class="btn btn-secondary" id="cancel-create-event-btn">Cancel</button>
+                    </div>
+                </div>
+                <!-- Edit Event Form -->
+                <div id="edit-event-form" style="display: none; background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ffeaa7;">
+                    <h4>Edit Event</h4>
+                    <input type="hidden" id="edit-event-id">
+                    <div class="form-row">
+                        <input type="text" id="edit-event-title" placeholder="Event Title" style="width: 100%; margin-bottom: 10px;">
+                        <textarea id="edit-event-description" placeholder="Event Description" style="width: 100%; margin-bottom: 10px; height: 60px;"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <input type="datetime-local" id="edit-event-start" style="width: 48%; margin-right: 4%;">
+                        <input type="datetime-local" id="edit-event-end" style="width: 48%;">
+                    </div>
+                    <div class="form-row" style="margin-top: 10px;">
+                        <button class="btn btn-success" id="submit-edit-event-btn">Update Event</button>
+                        <button class="btn btn-secondary" id="cancel-edit-event-btn">Cancel</button>
+                    </div>
+                </div>
+                <!-- Event List -->
+                <div id="events-list" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                    <h4>Upcoming Events</h4>
+                    <div id="events-container"></div>
+                </div>
+            </div>
+            <div id="calendar-status"></div>
+        </div>
+
+        <!-- Voice Calendar Tests -->
+        <div class="section">
+            <h2>🎤 Voice Calendar Commands</h2>
+            <p>Test calendar voice commands that work over the phone:</p>
+            <div class="voice-calendar-tests">
+                <div class="test-commands">
+                    <h4>Quick Test Commands:</h4>
+                    <button type="button" class="btn btn-info btn-sm voice-test-btn" data-command="What's on my calendar today?">📅 "What's on my calendar today?"</button>
+                    <button type="button" class="btn btn-info btn-sm voice-test-btn" data-command="Schedule a meeting with John tomorrow at 2 PM">➕ "Schedule meeting with John tomorrow at 2 PM"</button>
+                    <button type="button" class="btn btn-info btn-sm voice-test-btn" data-command="Do I have any meetings this afternoon?">❓ "Do I have meetings this afternoon?"</button>
+                    <button type="button" class="btn btn-info btn-sm voice-test-btn" data-command="Cancel my 3 PM meeting">❌ "Cancel my 3 PM meeting"</button>
+                    <button type="button" class="btn btn-warning btn-sm voice-test-btn" data-command="Can you tell me what my appointment is about at 4:30?">🔍 "What's my appointment at 4:30?"</button>
+                </div>
+                <div class="custom-command" style="margin-top: 15px;">
+                    <h4>Custom Voice Command:</h4>
+                    <div class="input-group">
+                        <input type="text" id="voice-command-input" placeholder="Enter a voice command to test..." style="width: 70%; margin-right: 10px;">
+                        <button class="btn btn-primary" id="test-voice-command-btn">Test Voice Command</button>
+                    </div>
+                </div>
+            </div>
+            <div id="voice-calendar-status"></div>
+        </div>
+
+        <!-- Gmail Tests -->
+        <div class="section">
+            <h2>📧 Gmail Integration Tests</h2>
+            <div class="gmail-auth">
+                <button class="btn btn-primary" id="test-gmail-btn">Test Gmail Connection</button>
+                <button class="btn btn-warning" id="gmail-auth-btn">Authenticate Gmail</button>
+                <div class="input-group">
+                    <input type="text" id="gmail-auth-code" placeholder="Enter OAuth code (if needed)">
+                    <button class="btn btn-info" id="submit-gmail-auth-code-btn">Submit Code</button>
+                </div>
+            </div>
+            <div class="gmail-operations">
+                <button class="btn btn-success" id="list-messages-btn">Recent Messages</button>
+                <button class="btn btn-info" id="list-unread-btn">Unread Messages</button>
+                <button class="btn btn-warning" id="list-important-btn">Important Messages</button>
+            </div>
+            <div id="gmail-status"></div>
+        </div>
+
+        <!-- Voice Gmail Tests -->
+        <div class="section">
+            <h2>🎤 Voice Gmail Commands</h2>
+            <p>Test Gmail voice commands that work over the phone:</p>
+            <div class="voice-gmail-tests">
+                <div class="test-commands">
+                    <h4>Quick Test Commands:</h4>
+                    <button type="button" class="btn btn-info btn-sm gmail-voice-test-btn" data-command="What emails did I receive today?">📧 "What emails did I receive today?"</button>
+                    <button type="button" class="btn btn-info btn-sm gmail-voice-test-btn" data-command="Do I have any important emails?">⭐ "Do I have any important emails?"</button>
+                    <button type="button" class="btn btn-info btn-sm gmail-voice-test-btn" data-command="What's in my inbox from this morning?">🌅 "What's in my inbox from this morning?"</button>
+                    <button type="button" class="btn btn-info btn-sm gmail-voice-test-btn" data-command="Read me the email from John">👤 "Read me the email from John"</button>
+                    <button type="button" class="btn btn-warning btn-sm gmail-voice-test-btn" data-command="Do I have any new messages?">🆕 "Do I have any new messages?"</button>
+                </div>
+                <div class="custom-command">
+                    <h4>Custom Gmail Voice Command:</h4>
+                    <div class="input-group">
+                        <input type="text" id="gmail-voice-command-input" placeholder="Enter a Gmail voice command to test..." style="width: 70%; margin-right: 10px;">
+                        <button class="btn btn-primary" id="test-gmail-voice-command-btn">Test Gmail Voice Command</button>
+                    </div>
+                </div>
+            </div>
+            <div id="voice-gmail-status"></div>
+        </div>
+
+        <!-- Voice Daily Summary Commands -->
+        <div class="section">
+            <h2>🌅 Voice Daily Summary Commands</h2>
+            <p>Test comprehensive daily summary voice commands that combine calendar, emails, and bills:</p>
+            <div class="voice-daily-summary-tests">
+                <div class="test-commands">
+                    <h4>Quick Test Commands:</h4>
+                    <button type="button" class="btn btn-success btn-sm daily-summary-voice-test-btn" data-command="Give me my daily summary">🌅 "Give me my daily summary"</button>
+                    <button type="button" class="btn btn-success btn-sm daily-summary-voice-test-btn" data-command="What's my schedule and important emails for today?">📅 "What's my schedule and important emails for today?"</button>
+                    <button type="button" class="btn btn-success btn-sm daily-summary-voice-test-btn" data-command="Do I have any bills due soon?">💰 "Do I have any bills due soon?"</button>
+                    <button type="button" class="btn btn-success btn-sm daily-summary-voice-test-btn" data-command="What meetings do I have and what important emails came in?">🔍 "What meetings do I have and what important emails came in?"</button>
+                    <button type="button" class="btn btn-success btn-sm daily-summary-voice-test-btn" data-command="Tell me about my day">📊 "Tell me about my day"</button>
+                    <button type="button" class="btn btn-success btn-sm daily-summary-voice-test-btn" data-command="What do I need to know today?">🧠 "What do I need to know today?"</button>
+                </div>
+                <div class="custom-command">
+                    <h4>Custom Daily Summary Voice Command:</h4>
+                    <div class="input-group">
+                        <input type="text" id="daily-summary-voice-command-input" placeholder="Enter a daily summary voice command to test..." style="width: 70%; margin-right: 10px;">
+                        <button class="btn btn-success" id="test-daily-summary-voice-command-btn">Test Daily Summary Voice Command</button>
+                    </div>
+                </div>
+            </div>
+            <div id="voice-daily-summary-status"></div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="section">
+            <h2>📋 Activity Log</h2>
+            <button class="btn btn-warning" id="clear-log-btn">Clear Log</button>
+            <div id="activity-log" class="log"></div>
+        </div>
+    </div>
+
+    <!-- External JavaScript file for CSP compliance -->
+    <script src="/static/js/test.js"></script>
+</body>
+</html>

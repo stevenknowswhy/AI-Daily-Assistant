@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Call Preferences Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 3px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daily Call Preferences Persistence Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Save Preferences</h2>
+        <button onclick="savePreferences()">Save Test Preferences</button>
+        <div id="saveResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Load Preferences (API)</h2>
+        <button onclick="loadPreferencesAPI()">Load from API</button>
+        <div id="loadAPIResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Load Preferences (localStorage)</h2>
+        <button onclick="loadPreferencesLocal()">Load from localStorage</button>
+        <div id="loadLocalResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 4: Clear localStorage</h2>
+        <button onclick="clearLocalStorage()">Clear localStorage</button>
+        <div id="clearResult" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3005/api/daily-call-preferences';
+        const USER_ID = 'test-user-123';
+        
+        const testPreferences = {
+            phoneNumber: '+1234567890',
+            callTime: '09:00',
+            timezone: 'America/New_York',
+            noAnswerAction: 'email_briefing',
+            retryCount: 2,
+            isActive: true
+        };
+
+        async function savePreferences() {
+            const resultDiv = document.getElementById('saveResult');
+            resultDiv.textContent = 'Saving preferences...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/${USER_ID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testPreferences)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Preferences saved successfully!\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Failed to save: ${data.error}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function loadPreferencesAPI() {
+            const resultDiv = document.getElementById('loadAPIResult');
+            resultDiv.textContent = 'Loading preferences from API...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/${USER_ID}`);
+                const data = await response.json();
+                
+                if (data.success && data.preferences) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Preferences loaded from API!\n${JSON.stringify(data.preferences, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ No preferences found or error: ${data.error || 'Unknown error'}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function loadPreferencesLocal() {
+            const resultDiv = document.getElementById('loadLocalResult');
+            
+            try {
+                const stored = localStorage.getItem(`daily_call_preferences_${USER_ID}`);
+                
+                if (stored) {
+                    const preferences = JSON.parse(stored);
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Preferences loaded from localStorage!\n${JSON.stringify(preferences, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = '❌ No preferences found in localStorage';
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function clearLocalStorage() {
+            const resultDiv = document.getElementById('clearResult');
+            
+            try {
+                localStorage.removeItem(`daily_call_preferences_${USER_ID}`);
+                resultDiv.className = 'result success';
+                resultDiv.textContent = '✅ localStorage cleared successfully!';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        // Auto-load on page load
+        window.addEventListener('load', () => {
+            loadPreferencesLocal();
+        });
+    </script>
+</body>
+</html>

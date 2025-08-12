@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Briefing Modal Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .briefing-container {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        button:hover {
+            background: #f8f9fa;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .success {
+            color: #28a745;
+        }
+        .briefing-text {
+            line-height: 1.6;
+            color: #333;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Daily Briefing Modal Test</h1>
+        <p>This page tests the enhanced Daily Briefing Modal functionality including copy and download features.</p>
+        
+        <button onclick="generateTestBriefing()">Generate Test Briefing</button>
+        
+        <div id="briefingContainer" class="briefing-container" style="display: none;">
+            <h3>Your Daily Briefing</h3>
+            <div id="briefingText" class="briefing-text"></div>
+            
+            <div class="button-group">
+                <button onclick="copyToClipboard()" id="copyBtn">
+                    📋 Copy to Clipboard
+                </button>
+                <button onclick="downloadAsText()" id="txtBtn">
+                    📄 Download TXT
+                </button>
+                <button onclick="downloadAsPDF()" id="pdfBtn">
+                    📑 Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        let briefingText = '';
+
+        function generateTestBriefing() {
+            briefingText = `**Good evening! 🌟 It's ${new Date().toLocaleTimeString()} on ${new Date().toLocaleDateString()}.**
+
+Looking at your calendar, you have several upcoming events that deserve your attention. Your next meeting is scheduled for tomorrow morning, and it would be wise to prepare any necessary materials tonight.
+
+In your email inbox, you've received several important messages that may require your response. Consider reviewing them before the end of the day to stay on top of your communications.
+
+Regarding your finances, you have a few bills coming due in the next week. Here's a quick summary:
+• Electric Bill: $120 due on August 15th
+• Internet Service: $79.99 due on August 18th  
+• Phone Bill: $65 due on August 20th
+
+**Action Items for Tomorrow:**
+1. Review and respond to priority emails
+2. Prepare materials for morning meeting
+3. Set reminders for upcoming bill payments
+4. Check calendar for any schedule conflicts
+
+Have a productive day ahead! 🚀`;
+
+            document.getElementById('briefingText').textContent = briefingText;
+            document.getElementById('briefingContainer').style.display = 'block';
+        }
+
+        async function copyToClipboard() {
+            try {
+                await navigator.clipboard.writeText(briefingText);
+                const btn = document.getElementById('copyBtn');
+                btn.innerHTML = '✅ Copied!';
+                btn.classList.add('success');
+                setTimeout(() => {
+                    btn.innerHTML = '📋 Copy to Clipboard';
+                    btn.classList.remove('success');
+                }, 2000);
+            } catch (error) {
+                alert('Failed to copy to clipboard: ' + error.message);
+            }
+        }
+
+        function downloadAsText() {
+            try {
+                const blob = new Blob([briefingText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Daily_Briefing_${getCurrentDateString()}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                alert('Text file downloaded!');
+            } catch (error) {
+                alert('Failed to download text file: ' + error.message);
+            }
+        }
+
+        function downloadAsPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const margin = 20;
+                const maxWidth = pageWidth - 2 * margin;
+                
+                // Add title
+                pdf.setFontSize(16);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('Daily Briefing', margin, 30);
+                
+                // Add date
+                pdf.setFontSize(12);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, margin, 45);
+                
+                // Add briefing content
+                pdf.setFontSize(10);
+                const lines = pdf.splitTextToSize(briefingText, maxWidth);
+                pdf.text(lines, margin, 60);
+                
+                // Save the PDF
+                pdf.save(`Daily_Briefing_${getCurrentDateString()}.pdf`);
+                alert('PDF downloaded!');
+            } catch (error) {
+                alert('Failed to generate PDF: ' + error.message);
+            }
+        }
+
+        function getCurrentDateString() {
+            const now = new Date();
+            return now.toISOString().split('T')[0]; // YYYY-MM-DD format
+        }
+    </script>
+</body>
+</html>

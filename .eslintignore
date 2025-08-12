@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+dist/
+
+# Archive and temporary directories
+archive/
+bmad-temp/
+bmap_mcp/
+clerk-mcp-server/
+retellai-mcp-server/
+
+# Backend services (separate linting)
+twilio-openrouter-voice/
+
+# Test directories and files
+test-results/
+playwright-report/
+coverage/
+e2e/
+tests/
+src/__tests__/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Build outputs
+*.tsbuildinfo
+.eslintcache
+
+# Configuration files
+vite.config.ts
+vitest.config.ts
+vitest.setup.ts
+playwright.config.ts
+
+# Stories (Storybook handles its own linting)
+**/*.stories.ts
+**/*.stories.tsx
+
+# Type definitions that cause parsing issues
+src/types/global.d.ts
+src/types/speech.d.ts
+src/types/vitest-env.d.ts
+
+# Test and debug components
+src/components/test/
+src/components/debug/
+src/tests/

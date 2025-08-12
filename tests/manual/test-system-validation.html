@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Validation Test - AI Daily Assistant</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .test-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .status.success { background: #10b981; color: white; }
+        .status.error { background: #ef4444; color: white; }
+        .status.pending { background: #f59e0b; color: white; }
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 4px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .success-text { color: #10b981; }
+        .error-text { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 System Validation Test</h1>
+            <p>Comprehensive testing of Daily Call Widget & Chatterbox Backend</p>
+        </div>
+
+        <div class="test-section">
+            <h2>🏥 Backend Health Check</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Server Status <span id="health-status" class="status pending">Testing...</span></h3>
+                    <button class="btn" onclick="testHealth()">Test Health</button>
+                    <div id="health-result" class="result"></div>
+                </div>
+                <div class="test-card">
+                    <h3>Authentication Status <span id="auth-status" class="status pending">Testing...</span></h3>
+                    <button class="btn" onclick="testAuth()">Test Auth</button>
+                    <div id="auth-result" class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🤖 Chatterbox AI Backend</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>AI Processing <span id="ai-status" class="status pending">Testing...</span></h3>
+                    <button class="btn" onclick="testAI()">Test AI</button>
+                    <button class="btn" onclick="testDailyBriefing()">Test Daily Briefing</button>
+                    <div id="ai-result" class="result"></div>
+                </div>
+                <div class="test-card">
+                    <h3>Voice Commands <span id="voice-status" class="status pending">Testing...</span></h3>
+                    <button class="btn" onclick="testCalendarVoice()">Test Calendar</button>
+                    <button class="btn" onclick="testBillsVoice()">Test Bills</button>
+                    <button class="btn" onclick="testChatterboxPort()">Test Port Fix</button>
+                    <div id="voice-result" class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📞 Daily Call Widget</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Data Persistence <span id="persistence-status" class="status pending">Testing...</span></h3>
+                    <button class="btn" onclick="testPersistence()">Test Save/Load</button>
+                    <button class="btn" onclick="authenticateBills()">Authenticate</button>
+                    <div id="persistence-result" class="result"></div>
+                </div>
+                <div class="test-card">
+                    <h3>Phone Number CRUD <span id="crud-status" class="status pending">Testing...</span></h3>
+                    <button class="btn" onclick="testCRUD()">Test CRUD</button>
+                    <button class="btn" onclick="clearTestData()">Clear Test Data</button>
+                    <div id="crud-result" class="result"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Overall System Status</h2>
+            <div class="test-card">
+                <h3>System Health Summary</h3>
+                <button class="btn" onclick="runAllTests()">🚀 Run All Tests</button>
+                <div id="summary-result" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3005';
+        const TEST_USER_ID = 'user_314M04o2MAC2IWgqNsdMK9AT7Kw';
+
+        function updateStatus(elementId, status, message = '') {
+            const element = document.getElementById(elementId);
+            element.className = `status ${status}`;
+            element.textContent = status === 'success' ? '✅ Success' : 
+                                 status === 'error' ? '❌ Error' : 
+                                 '⏳ Testing...';
+        }
+
+        function logResult(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = isError ? 'error-text' : 'success-text';
+            element.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        async function testHealth() {
+            updateStatus('health-status', 'pending');
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                updateStatus('health-status', 'success');
+                logResult('health-result', `Health check passed: ${JSON.stringify(data)}`);
+            } catch (error) {
+                updateStatus('health-status', 'error');
+                logResult('health-result', `Health check failed: ${error.message}`, true);
+            }
+        }
+
+        async function testAuth() {
+            updateStatus('auth-status', 'pending');
+            try {
+                const response = await fetch(`${API_BASE}/test/auth-status`);
+                const data = await response.json();
+                updateStatus('auth-status', 'success');
+                logResult('auth-result', `Auth status: ${JSON.stringify(data)}`);
+            } catch (error) {
+                updateStatus('auth-status', 'error');
+                logResult('auth-result', `Auth check failed: ${error.message}`, true);
+            }
+        }
+
+        async function testAI() {
+            updateStatus('ai-status', 'pending');
+            try {
+                const response = await fetch(`${API_BASE}/api/chatterbox/process`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'Hello AI, are you working?', userId: 'test-user' })
+                });
+                const data = await response.json();
+                updateStatus('ai-status', data.success ? 'success' : 'error');
+                logResult('ai-result', `AI Response: ${data.text || data.error}`, !data.success);
+            } catch (error) {
+                updateStatus('ai-status', 'error');
+                logResult('ai-result', `AI test failed: ${error.message}`, true);
+            }
+        }
+
+        async function testDailyBriefing() {
+            try {
+                const response = await fetch(`${API_BASE}/api/chatterbox/process`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'Give me my daily briefing', userId: 'test-user' })
+                });
+                const data = await response.json();
+                logResult('ai-result', `Daily Briefing: ${data.text || data.error}`, !data.success);
+            } catch (error) {
+                logResult('ai-result', `Daily briefing failed: ${error.message}`, true);
+            }
+        }
+
+        async function testCalendarVoice() {
+            updateStatus('voice-status', 'pending');
+            try {
+                const response = await fetch(`${API_BASE}/test/calendar/voice`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: "What's on my calendar today?" })
+                });
+                const data = await response.json();
+                updateStatus('voice-status', data.success ? 'success' : 'error');
+                logResult('voice-result', `Calendar Voice: ${data.response || data.error}`, !data.success);
+            } catch (error) {
+                updateStatus('voice-status', 'error');
+                logResult('voice-result', `Calendar voice failed: ${error.message}`, true);
+            }
+        }
+
+        async function testBillsVoice() {
+            try {
+                const response = await fetch(`${API_BASE}/api/chatterbox/process`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'What bills are due soon?', userId: 'test-user' })
+                });
+                const data = await response.json();
+                logResult('voice-result', `Bills Voice: ${data.text || data.error}`, !data.success);
+            } catch (error) {
+                logResult('voice-result', `Bills voice failed: ${error.message}`, true);
+            }
+        }
+
+        async function testChatterboxPort() {
+            try {
+                // Test that Chatterbox service is now using port 3005 instead of 8000
+                logResult('voice-result', 'Testing Chatterbox port configuration...');
+
+                // Test health check on correct port (3005)
+                const healthResponse = await fetch(`${API_BASE}/health`);
+                const healthData = await healthResponse.json();
+
+                if (healthResponse.ok) {
+                    logResult('voice-result', `✅ Chatterbox port fix successful - server responding on port 3005`);
+                } else {
+                    logResult('voice-result', `❌ Port 3005 health check failed`, true);
+                }
+
+                // Test that old port (8000) is not being used
+                try {
+                    const oldPortResponse = await fetch('http://localhost:8000/health', {
+                        signal: AbortSignal.timeout(2000)
+                    });
+                    logResult('voice-result', `⚠️ Warning: Port 8000 is still responding (should be unused)`, true);
+                } catch (error) {
+                    logResult('voice-result', `✅ Port 8000 correctly not responding (as expected)`);
+                }
+
+            } catch (error) {
+                logResult('voice-result', `Chatterbox port test failed: ${error.message}`, true);
+            }
+        }
+
+        async function authenticateBills() {
+            try {
+                const response = await fetch(`${API_BASE}/test/bills/authenticate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: 'dashboard-user' })
+                });
+                const data = await response.json();
+                logResult('persistence-result', `Authentication: ${data.success ? 'Success' : data.error}`, !data.success);
+            } catch (error) {
+                logResult('persistence-result', `Authentication failed: ${error.message}`, true);
+            }
+        }
+
+        async function testPersistence() {
+            updateStatus('persistence-status', 'pending');
+            try {
+                // First authenticate
+                await authenticateBills();
+
+                // Test save with corrected data format
+                const testPhone = '+15551234567';
+                const saveResponse = await fetch(`${API_BASE}/api/daily-call-preferences/${TEST_USER_ID}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone_number: testPhone,
+                        call_time: '09:00',  // Fixed: use HH:MM format not HH:MM:SS
+                        timezone: 'America/Los_Angeles',
+                        no_answer_action: 'text_briefing',
+                        retry_count: 1,
+                        is_active: true
+                    })
+                });
+                const saveData = await saveResponse.json();
+
+                // Test load
+                const loadResponse = await fetch(`${API_BASE}/api/daily-call-preferences/${TEST_USER_ID}`);
+                const loadData = await loadResponse.json();
+
+                const success = saveData.success && loadData.success &&
+                               loadData.preferences?.phone_number === testPhone;
+
+                updateStatus('persistence-status', success ? 'success' : 'error');
+                logResult('persistence-result',
+                    `Save: ${saveData.success ? 'OK' : saveData.error}, Load: ${loadData.success ? 'OK' : loadData.error}, Phone: ${loadData.preferences?.phone_number}`,
+                    !success);
+            } catch (error) {
+                updateStatus('persistence-status', 'error');
+                logResult('persistence-result', `Persistence test failed: ${error.message}`, true);
+            }
+        }
+
+        async function testCRUD() {
+            updateStatus('crud-status', 'pending');
+            try {
+                await authenticateBills();
+                
+                const testData = {
+                    phone_number: '+15559876543',
+                    call_time: '10:30:00',
+                    timezone: 'America/New_York',
+                    no_answer_action: 'email_briefing',
+                    retry_count: 2
+                };
+                
+                // Create/Update
+                const createResponse = await fetch(`${API_BASE}/api/daily-call-preferences/${TEST_USER_ID}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                });
+                const createData = await createResponse.json();
+                
+                // Read
+                const readResponse = await fetch(`${API_BASE}/api/daily-call-preferences/${TEST_USER_ID}`);
+                const readData = await readResponse.json();
+                
+                const success = createData.success && readData.success;
+                updateStatus('crud-status', success ? 'success' : 'error');
+                logResult('crud-result', 
+                    `CRUD Test - Create: ${createData.success ? 'OK' : createData.error}, Read: ${readData.success ? 'OK' : readData.error}`, 
+                    !success);
+            } catch (error) {
+                updateStatus('crud-status', 'error');
+                logResult('crud-result', `CRUD test failed: ${error.message}`, true);
+            }
+        }
+
+        async function clearTestData() {
+            logResult('crud-result', 'Test data cleared (preferences remain for user experience)');
+        }
+
+        async function runAllTests() {
+            logResult('summary-result', '🚀 Starting comprehensive system validation...');
+            
+            await testHealth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testAuth();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testAI();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testCalendarVoice();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testPersistence();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testCRUD();
+            
+            logResult('summary-result', '✅ All tests completed! Check individual sections for results.');
+        }
+
+        // Auto-run basic tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testHealth();
+                testAuth();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

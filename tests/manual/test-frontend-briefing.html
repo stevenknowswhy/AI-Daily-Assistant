@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Frontend Daily Briefing</title>
+</head>
+<body>
+    <h1>Test Frontend Daily Briefing</h1>
+    <button onclick="testDailyBriefing()">Test Daily Briefing</button>
+    <div id="result"></div>
+
+    <script>
+        async function testDailyBriefing() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                // Step 1: Fetch data from all sources
+                console.log('Fetching data from all sources...');
+                
+                const [calendarResponse, emailResponse, billsResponse] = await Promise.allSettled([
+                    fetch('http://localhost:3005/test/calendar/events').then(r => r.json()),
+                    fetch('http://localhost:3005/test/gmail/messages?maxResults=20').then(r => r.json()),
+                    fetch('http://localhost:3005/api/bills/dashboard-user').then(r => r.json())
+                ]);
+
+                console.log('Calendar response:', calendarResponse);
+                console.log('Email response:', emailResponse);
+                console.log('Bills response:', billsResponse);
+
+                const aggregatedData = {
+                    calendar: calendarResponse.status === 'fulfilled' && calendarResponse.value.success
+                        ? calendarResponse.value.events || [] : [],
+                    emails: emailResponse.status === 'fulfilled' && emailResponse.value.success
+                        ? emailResponse.value.messages || [] : [],
+                    bills: billsResponse.status === 'fulfilled' && Array.isArray(billsResponse.value)
+                        ? billsResponse.value : [],
+                    upcomingEvents: [],
+                    billsDueSoon: []
+                };
+
+                // Filter and sanitize data (simplified version)
+                const today = new Date();
+                const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+                
+                // Filter recent emails and sanitize
+                const recentEmails = aggregatedData.emails.filter(email => {
+                    const emailDate = new Date(email.date || email.internalDate);
+                    return emailDate >= yesterday;
+                }).map(email => ({
+                    ...email,
+                    snippet: email.snippet && typeof email.snippet === 'string'
+                        ? email.snippet.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                            .replace(/javascript:/gi, '')
+                            .replace(/on\w+\s*=/gi, '')
+                            .replace(/vbscript:/gi, '')
+                            .substring(0, 500)
+                        : '',
+                    body: email.body && typeof email.body === 'string'
+                        ? email.body.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                            .replace(/javascript:/gi, '')
+                            .replace(/on\w+\s*=/gi, '')
+                            .replace(/vbscript:/gi, '')
+                            .substring(0, 2000)
+                        : '',
+                    subject: email.subject && typeof email.subject === 'string'
+                        ? email.subject.substring(0, 200)
+                        : '',
+                }));
+                aggregatedData.emails = recentEmails;
+
+                console.log('Aggregated data:', aggregatedData);
+
+                // Step 2: Send to daily briefing API
+                console.log('Sending to daily briefing API...');
+                
+                const briefingResponse = await fetch('http://localhost:3005/api/bills/daily-briefing', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: 'dashboard-user',
+                        data: aggregatedData,
+                        requestType: 'comprehensive-briefing'
+                    })
+                });
+
+                console.log('Briefing response status:', briefingResponse.status);
+                
+                if (!briefingResponse.ok) {
+                    const errorText = await briefingResponse.text();
+                    throw new Error(`HTTP ${briefingResponse.status}: ${errorText}`);
+                }
+
+                const briefingResult = await briefingResponse.json();
+                console.log('Briefing result:', briefingResult);
+                
+                if (briefingResult.success) {
+                    resultDiv.innerHTML = `
+                        <h2>✅ Success!</h2>
+                        <h3>Daily Briefing:</h3>
+                        <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; white-space: pre-wrap;">${briefingResult.briefing}</div>
+                        <h3>Data Summary:</h3>
+                        <ul>
+                            <li>Calendar events: ${aggregatedData.calendar.length}</li>
+                            <li>Recent emails: ${aggregatedData.emails.length}</li>
+                            <li>Bills: ${aggregatedData.bills.length}</li>
+                        </ul>
+                    `;
+                } else {
+                    throw new Error(briefingResult.error || 'Failed to generate briefing');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `
+                    <h2>❌ Error</h2>
+                    <p style="color: red;">${error.message}</p>
+                    <p>Check the browser console for more details.</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

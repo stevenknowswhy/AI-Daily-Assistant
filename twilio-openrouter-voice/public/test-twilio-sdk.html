@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twilio SDK Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        #log {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Twilio SDK Loading Test</h1>
+    
+    <div id="results"></div>
+    
+    <button onclick="testTwilioSDK()">Test Twilio SDK</button>
+    <button onclick="testTokenEndpoint()">Test Token Endpoint</button>
+    <button onclick="clearLog()">Clear Log</button>
+    
+    <h3>Debug Log:</h3>
+    <div id="log"></div>
+
+    <!-- Load Twilio SDK locally -->
+    <script src="/js/twilio-voice.min.js"
+            onload="logMessage('✅ Twilio SDK loaded from local file', 'success')"
+            onerror="logMessage('❌ Failed to load local Twilio SDK', 'error')"></script>
+    
+    <script>
+        function logMessage(message, type = 'info') {
+            const log = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.innerHTML = `[${timestamp}] ${message}`;
+            entry.className = type;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            console.log(message);
+        }
+
+        function addResult(message, isSuccess) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${isSuccess ? 'success' : 'error'}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Fallback loading function
+        function loadTwilioFallback() {
+            logMessage('⚠️ Primary Twilio CDN failed, trying fallback...', 'error');
+            const script = document.createElement('script');
+            script.src = 'https://sdk.twilio.com/js/voice/releases/2.15.0/twilio-voice.min.js';
+            script.onload = () => logMessage('✅ Twilio SDK loaded from fallback CDN', 'success');
+            script.onerror = () => {
+                logMessage('❌ All Twilio CDN sources failed', 'error');
+                addResult('❌ Failed to load Twilio SDK from any CDN', false);
+            };
+            document.head.appendChild(script);
+        }
+
+        function testTwilioSDK() {
+            logMessage('🧪 Testing Twilio SDK availability...', 'info');
+            
+            // Test 1: Check if Twilio object exists
+            if (typeof window.Twilio === 'undefined') {
+                addResult('❌ window.Twilio is undefined', false);
+                logMessage('❌ window.Twilio is undefined', 'error');
+                return;
+            } else {
+                addResult('✅ window.Twilio is available', true);
+                logMessage('✅ window.Twilio is available', 'success');
+            }
+
+            // Test 2: Check if Twilio.Device exists
+            if (typeof window.Twilio.Device === 'undefined') {
+                addResult('❌ Twilio.Device is undefined', false);
+                logMessage('❌ Twilio.Device is undefined', 'error');
+                return;
+            } else {
+                addResult('✅ Twilio.Device is available', true);
+                logMessage('✅ Twilio.Device is available', 'success');
+            }
+
+            // Test 3: Check Twilio version
+            if (window.Twilio.version) {
+                addResult(`✅ Twilio SDK version: ${window.Twilio.version}`, true);
+                logMessage(`✅ Twilio SDK version: ${window.Twilio.version}`, 'success');
+            }
+
+            // Test 4: Try to create a device (without token)
+            try {
+                logMessage('🧪 Testing Twilio.Device constructor...', 'info');
+                // This should fail gracefully without a token
+                const testDevice = new Twilio.Device();
+                addResult('⚠️ Twilio.Device created without token (unexpected)', false);
+            } catch (error) {
+                if (error.message.includes('token') || error.message.includes('Token')) {
+                    addResult('✅ Twilio.Device constructor works (expected token error)', true);
+                    logMessage('✅ Twilio.Device constructor works (expected token error)', 'success');
+                } else {
+                    addResult(`❌ Unexpected error: ${error.message}`, false);
+                    logMessage(`❌ Unexpected error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        async function testTokenEndpoint() {
+            logMessage('🧪 Testing token endpoint...', 'info');
+            
+            try {
+                const response = await fetch('/twilio/token');
+                const data = await response.json();
+                
+                if (data.success && data.token) {
+                    addResult('✅ Token endpoint working', true);
+                    logMessage('✅ Token endpoint returned valid token', 'success');
+                    
+                    // Try to create device with real token
+                    if (typeof window.Twilio !== 'undefined' && window.Twilio.Device) {
+                        try {
+                            const device = new Twilio.Device(data.token);
+                            addResult('✅ Twilio.Device created successfully with token', true);
+                            logMessage('✅ Twilio.Device created successfully with token', 'success');
+                            device.destroy(); // Clean up
+                        } catch (error) {
+                            addResult(`❌ Failed to create device with token: ${error.message}`, false);
+                            logMessage(`❌ Failed to create device with token: ${error.message}`, 'error');
+                        }
+                    }
+                } else {
+                    addResult(`❌ Token endpoint failed: ${data.error || 'Unknown error'}`, false);
+                    logMessage(`❌ Token endpoint failed: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Token endpoint error: ${error.message}`, false);
+                logMessage(`❌ Token endpoint error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-run tests when page loads
+        window.addEventListener('load', () => {
+            logMessage('🚀 Page loaded, running automatic tests...', 'info');
+            setTimeout(() => {
+                testTwilioSDK();
+                setTimeout(() => {
+                    testTokenEndpoint();
+                }, 1000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

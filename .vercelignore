@@ -1,0 +1,101 @@
+# Dependencies
+node_modules/
+twilio-openrouter-voice/node_modules/
+clerk-mcp-server/node_modules/
+retellai-mcp-server/node_modules/
+bmad-temp/node_modules/
+bmap_mcp/node_modules/
+
+# Development files
+.env.local
+.env.development
+.env.test
+*.log
+logs/
+
+# Test files and results
+test-results/
+playwright-report/
+coverage/
+.nyc_output/
+tests/
+e2e/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Development tools
+.storybook/
+src/stories/
+**/*.stories.ts
+**/*.stories.tsx
+
+# Archive and temporary files
+archive/
+bmad-temp/
+bmap_mcp/
+clerk-mcp-server/
+retellai-mcp-server/
+
+# Backend services (deploy separately)
+twilio-openrouter-voice/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts (except dist/)
+*.tsbuildinfo
+.eslintcache
+
+# Documentation that's not needed in production
+docs/
+*.md
+!README.md
+
+# Keep essential files for Vercel
+!package.json
+!package-lock.json
+!vite.config.ts
+!tsconfig.json
+!tailwind.config.js
+!postcss.config.js
+
+# Configuration files not needed in production
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+vitest.config.ts
+vitest.setup.ts
+vitest.shims.d.ts
+playwright.config.ts
+jest.config.js
+.eslintrc.*
+.prettierrc.*
+tailwind.config.js
+postcss.config.js
+
+# Scripts
+scripts/
+start-dev.js
+start-dev.sh
+
+# Docker files
+Dockerfile
+docker-compose.yml
+nginx.conf
+
+# Credentials and sensitive files
+credentials*.json
+token.json
+*.pem
+*.key
+*.crt

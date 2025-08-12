@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔗 CORS Test - AI Daily Assistant</h1>
+    <p>Testing CORS configuration between frontend (port 5176) and backend (port 3005)</p>
+    
+    <button onclick="testHealthEndpoint()">Test Health Endpoint</button>
+    <button onclick="testChatterboxAPI()">Test Chatterbox API</button>
+    <button onclick="testDailyCallAPI()">Test Daily Call API</button>
+    
+    <div id="results"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:3005';
+        
+        function showResult(message, isSuccess = true) {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${isSuccess ? 'success' : 'error'}`;
+            resultDiv.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        async function testHealthEndpoint() {
+            try {
+                showResult('Testing health endpoint...', true);
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                showResult(`✅ Health endpoint working!\nResponse: ${JSON.stringify(data, null, 2)}`, true);
+            } catch (error) {
+                showResult(`❌ Health endpoint failed: ${error.message}`, false);
+            }
+        }
+
+        async function testChatterboxAPI() {
+            try {
+                showResult('Testing Chatterbox API...', true);
+                const response = await fetch(`${API_BASE}/api/chatterbox/process`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Hello from CORS test',
+                        userId: 'cors-test-user'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                showResult(`✅ Chatterbox API working!\nResponse: ${data.text}\nModel: ${data.model}`, true);
+            } catch (error) {
+                showResult(`❌ Chatterbox API failed: ${error.message}`, false);
+            }
+        }
+
+        async function testDailyCallAPI() {
+            try {
+                showResult('Testing Daily Call API...', true);
+                const response = await fetch(`${API_BASE}/api/daily-call-preferences/cors-test-user`);
+                
+                if (response.status === 401) {
+                    const data = await response.json();
+                    showResult(`⚠️ Daily Call API working (authentication required)\nResponse: ${JSON.stringify(data, null, 2)}`, true);
+                } else if (response.ok) {
+                    const data = await response.json();
+                    showResult(`✅ Daily Call API working!\nResponse: ${JSON.stringify(data, null, 2)}`, true);
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                showResult(`❌ Daily Call API failed: ${error.message}`, false);
+            }
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testHealthEndpoint();
+                setTimeout(() => testChatterboxAPI(), 1000);
+                setTimeout(() => testDailyCallAPI(), 2000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

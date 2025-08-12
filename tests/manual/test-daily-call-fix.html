@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Call Widget Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .console-log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Daily Call Widget Save Button Fix Test</h1>
+    
+    <div class="test-container">
+        <h2>Fix Applied: React State Update During Render</h2>
+        <div class="info">
+            <strong>Issue:</strong> useEffect dependency array included <code>editForm</code> causing setState during render<br>
+            <strong>Fix:</strong> Removed <code>editForm</code> from dependency array: <code>[preferences, isEditMode]</code><br>
+            <strong>Pattern:</strong> Same as previously fixed Dashboard.tsx issue documented in CRITICAL_FIXES_SUMMARY.md
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Test Instructions</h2>
+        <ol>
+            <li>Open the AI Daily Assistant at <a href="http://localhost:5174" target="_blank">http://localhost:5174</a></li>
+            <li>Open browser Developer Tools (F12) and go to Console tab</li>
+            <li>Navigate to the Daily Call widget</li>
+            <li>Click the "Edit" button (Settings icon) to enter edit mode</li>
+            <li>Enter a phone number (e.g., +1 555-123-4567)</li>
+            <li>Click the "Save" button</li>
+            <li>Check the results below</li>
+        </ol>
+    </div>
+
+    <div class="test-container">
+        <h2>Expected Results</h2>
+        <div class="success">
+            ✅ <strong>No React warnings in console</strong><br>
+            ✅ <strong>Application does not crash or exit</strong><br>
+            ✅ <strong>Phone number is saved successfully</strong><br>
+            ✅ <strong>Success toast notification appears</strong><br>
+            ✅ <strong>Widget exits edit mode after save</strong>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Console Log Monitor</h2>
+        <p>Check your browser console for any React warnings. The fix should eliminate:</p>
+        <div class="error">
+            <strong>Previous Error (should be gone):</strong><br>
+            Warning: Cannot update a component while rendering a different component
+        </div>
+        
+        <div class="success">
+            <strong>Expected Console Output:</strong><br>
+            🔐 DailyCallWidget: Authenticating with Bills/Supabase...<br>
+            ✅ DailyCallWidget: Bills/Supabase authentication successful<br>
+            💾 Saving daily call preferences: {...}<br>
+            ✅ Preferences saved successfully
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Technical Details</h2>
+        <h3>Root Cause Analysis</h3>
+        <p>The crash was caused by the same React state update violation that was previously fixed in Dashboard.tsx:</p>
+        
+        <h4>Before (Problematic):</h4>
+        <pre class="console-log">useEffect(() => {
+  if (preferences && isEditMode) {
+    editForm.reset(preferences);
+  }
+}, [preferences, isEditMode, editForm]); // ❌ editForm causes re-render loop</pre>
+
+        <h4>After (Fixed):</h4>
+        <pre class="console-log">useEffect(() => {
+  if (preferences && isEditMode) {
+    editForm.reset(preferences);
+  }
+}, [preferences, isEditMode]); // ✅ Removed editForm from dependencies</pre>
+
+        <h3>Why This Fixes the Crash</h3>
+        <ul>
+            <li><strong>editForm object recreation:</strong> React Hook Form's useForm() creates a new form object on every render</li>
+            <li><strong>Dependency array trigger:</strong> Including editForm in dependencies causes useEffect to run on every render</li>
+            <li><strong>setState during render:</strong> editForm.reset() triggers state updates during the render phase</li>
+            <li><strong>React violation:</strong> This violates React's rules and causes the "setState during render" error</li>
+            <li><strong>Application crash:</strong> In strict mode or production, this can cause the application to crash or exit</li>
+        </ul>
+    </div>
+
+    <div class="test-container">
+        <h2>Verification Checklist</h2>
+        <div id="checklist">
+            <label><input type="checkbox"> No React console warnings</label><br>
+            <label><input type="checkbox"> Application remains stable (no crash/exit)</label><br>
+            <label><input type="checkbox"> Phone number saves successfully</label><br>
+            <label><input type="checkbox"> Success toast notification appears</label><br>
+            <label><input type="checkbox"> Widget exits edit mode after save</label><br>
+            <label><input type="checkbox"> Authentication works properly</label><br>
+            <label><input type="checkbox"> Form validation works correctly</label><br>
+        </div>
+    </div>
+
+    <script>
+        // Add some basic interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔧 Daily Call Widget Fix Test Page Loaded');
+            console.log('📋 Follow the test instructions above to verify the fix');
+            
+            // Monitor for React warnings
+            const originalError = console.error;
+            console.error = function(...args) {
+                if (args[0] && args[0].includes && args[0].includes('Cannot update a component')) {
+                    console.log('❌ REACT WARNING DETECTED - Fix may not be working properly');
+                    console.log('🔍 Check the useEffect dependency arrays in DailyCallWidgetV2.tsx');
+                }
+                originalError.apply(console, args);
+            };
+        });
+    </script>
+</body>
+</html>
