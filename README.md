@@ -201,10 +201,12 @@ This application is optimized for deployment on Vercel with the following config
    - Import from GitHub: `https://github.com/stevenknowswhy/AI-Daily-Assistant.git`
 
 2. **Framework Settings**
-   - **Framework Preset**: Vite
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-   - **Install Command**: `npm install`
+   - **Framework Preset**: Vite (should auto-detect)
+   - **Build Command**: `npm run build` (should auto-populate)
+   - **Output Directory**: `dist` (should auto-populate)
+   - **Install Command**: `npm install` (should auto-populate)
+
+   **Important**: Do NOT add a custom `vercel.json` file - Vercel auto-detects Vite projects correctly.
 
 3. **Environment Variables Setup**
 
@@ -298,6 +300,14 @@ The backend (`twilio-openrouter-voice/`) needs separate deployment:
 - Check TypeScript errors: `npm run build:check`
 - Verify all dependencies are in `dependencies` not `devDependencies`
 - Ensure environment variables are properly prefixed
+
+##### Function Runtimes Error
+
+If you see "Function Runtimes must have a valid version":
+
+- **Remove any `vercel.json` file** - Vercel auto-detects Vite projects
+- Ensure Framework Preset is set to "Vite" in Vercel dashboard
+- Let Vercel use default configuration for Vite projects
 
 ##### OAuth Issues
 
