@@ -303,11 +303,36 @@ The backend (`twilio-openrouter-voice/`) needs separate deployment:
 
 ##### Function Runtimes Error
 
-If you see "Function Runtimes must have a valid version":
+The "Function Runtimes must have a valid version" error occurs when Vercel detects invalid runtime settings. Follow these steps:
 
-- **Remove any `vercel.json` file** - Vercel auto-detects Vite projects
-- Ensure Framework Preset is set to "Vite" in Vercel dashboard
-- Let Vercel use default configuration for Vite projects
+**Step 1: Locate Configuration Files**
+
+```bash
+# Check for problematic files
+find . -name "vercel.json" -o -name "now.json" -o -name ".vercel" -type d
+```
+
+**Step 2: Remove Legacy Configuration**
+
+- **Delete `vercel.json`** if it contains outdated function runtime settings
+- **Delete `now.json`** (legacy Vercel configuration)
+- **Remove `.vercel/` directory** if present
+
+**Step 3: Clean Package.json**
+
+Remove any legacy configuration:
+
+```json
+// Remove these sections if present:
+"now": { "runtime": "now-node@1.0.0" },
+"engines": { "now": "^1.0.0" }
+```
+
+**Step 4: Force Fresh Deployment**
+
+- Commit and push changes to trigger new deployment
+- In Vercel dashboard, click "Redeploy" to use latest commit
+- Verify deployment uses correct commit hash (not cached version)
 
 ##### OAuth Issues
 
