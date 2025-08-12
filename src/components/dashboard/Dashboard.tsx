@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/ClerkAuthContext';
-import { useDashboard } from '@/hooks/useDashboard';
-import { useDashboardState } from '@/hooks/useDashboardState';
-import { useConnectionStatus } from '@/hooks/useConnectionStatus';
-import { ChatterboxVoiceInterface } from '@/features/chatterbox/components/ChatterboxVoiceInterface';
+import { useDashboard } from '../../hooks/useDashboard';
+import { useDashboardState } from '../../hooks/useDashboardState';
+import { useConnectionStatus } from '../../hooks/useConnectionStatus';
+import { ChatterboxVoiceInterface } from '../../features/chatterbox/components/ChatterboxVoiceInterface';
 import { DashboardHeader } from './DashboardHeader';
 import { ConnectionBlocks } from './ConnectionBlocks';
 import { DailyCallWidgetV3 } from './widgets/DailyCallWidgetV3';
@@ -13,7 +13,7 @@ import { DailyBriefingPreview } from './DailyBriefingPreview';
 import { WelcomeBackSection } from './WelcomeBackSection';
 import { BillsKPI } from './widgets/BillsKPI';
 import { TodaysAppointments } from './widgets/TodaysAppointments';
-import { dailyBriefingService } from '@/services/dailyBriefingService';
+import { dailyBriefingService } from '../../services/dailyBriefingService';
 import toast, { Toaster } from 'react-hot-toast';
 
 interface DashboardProps {
