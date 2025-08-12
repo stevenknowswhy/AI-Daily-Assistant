@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { EmailWidget } from '@/components/dashboard/widgets/EmailWidget';
+import { EmailWidget } from '../../components/dashboard/widgets/EmailWidget';
 
 describe('EmailWidget', () => {
   it('renders title', async () => {

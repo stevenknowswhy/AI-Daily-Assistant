@@ -1,6 +1,6 @@
 import React, { Suspense, useState, lazy } from 'react';
 import { Settings } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../ui/button';
 const SettingsModal = lazy(() => import('./SettingsModal').then(m => ({ default: m.SettingsModal })));
 
 interface SettingsDropdownProps {

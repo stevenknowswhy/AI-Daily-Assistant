@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle, Calendar, Mail, DollarSign, Phone, ArrowRight, Sparkles } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 
 interface WelcomeSetupProps {
   connectionStatus: {

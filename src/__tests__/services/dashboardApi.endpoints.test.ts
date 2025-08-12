@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import dashboardApi from '@/services/dashboardApi';
+import dashboardApi from '../../services/dashboardApi';
 
 const mockFetch = vi.fn();
 

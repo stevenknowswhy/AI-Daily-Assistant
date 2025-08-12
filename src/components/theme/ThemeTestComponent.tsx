@@ -1,8 +1,8 @@
 import React from 'react';
 import { Sun, Moon, Settings, Calendar, Mail, LogOut, User, Loader2, DollarSign, RefreshCw, X, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTheme } from '@/components/providers/ModernThemeProvider';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { useTheme } from '../providers/ModernThemeProvider';
 
 /**
  * Theme Test Component - Used to verify all UI elements are properly themed

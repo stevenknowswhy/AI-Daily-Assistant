@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, Loader2, AlertCircle, RefreshCw, Plus, Edit, Trash2, Clock, MapPin, Users, FileText } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import { Textarea } from '../../ui/textarea';
+import { Label } from '../../ui/label';
+import { Badge } from '../../ui/badge';
+import { ScrollArea } from '../../ui/scroll-area';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { CalendarWidgetProps } from '@/types/dashboard';
+import { CalendarWidgetProps } from '../../../types/dashboard';
 import toast from 'react-hot-toast';
 
 interface CalendarEvent {

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../ui/button';
 import { Settings, ArrowRight } from 'lucide-react';
-import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 
 interface BeginSetupButtonProps {
   onBeginSetup: () => void;

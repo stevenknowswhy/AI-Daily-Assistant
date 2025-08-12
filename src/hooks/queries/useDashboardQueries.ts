@@ -6,8 +6,8 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys, queryOptions } from '@/lib/queryClient';
-import dashboardApi, { CalendarEvent, Email, Bill } from '@/services/dashboardApi';
+import { queryKeys, queryOptions } from '../../lib/queryClient';
+import dashboardApi, { CalendarEvent, Email, Bill } from '../../services/dashboardApi';
 
 /**
  * Hook for fetching calendar events

@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useCallback, useRef } from 'react';
-import { ConnectionStatus, AuthStatus } from '@/types/dashboard';
+import { ConnectionStatus, AuthStatus } from '../types/dashboard';
 import { useDashboard } from './useDashboard';
 import toast from 'react-hot-toast';
 

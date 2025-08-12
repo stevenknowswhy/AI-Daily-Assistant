@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { dailyCallPreferencesService } from '@/services/dailyCallPreferences';
+import { dailyCallPreferencesService } from '../../services/dailyCallPreferences';
 
 const USER_ID = 'test-user';
 

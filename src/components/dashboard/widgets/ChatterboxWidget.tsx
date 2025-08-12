@@ -1,9 +1,9 @@
 import React from 'react';
 import { Mic, User, Volume2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ChatterboxWidgetProps } from '@/types/dashboard';
-import { useAgentSettings } from '@/contexts/AgentSettingsContext';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Badge } from '../../ui/badge';
+import { ChatterboxWidgetProps } from '../../../types/dashboard';
+import { useAgentSettings } from '../../../contexts/AgentSettingsContext';
 
 export const ChatterboxWidget: React.FC<ChatterboxWidgetProps> = ({
   isVoiceActive,

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ConnectionBlocks } from '@/components/dashboard/ConnectionBlocks';
+import { ConnectionBlocks } from '../../components/dashboard/ConnectionBlocks';
 
 function setTheme(theme: 'light' | 'dark') {
   const root = document.documentElement;

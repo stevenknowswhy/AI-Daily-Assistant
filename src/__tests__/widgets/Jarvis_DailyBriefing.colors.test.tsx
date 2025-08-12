@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { JarvisWidget } from '@/components/dashboard/widgets/JarvisWidget';
-import { DailyBriefingWidget } from '@/components/dashboard/widgets/DailyBriefingWidget';
+import { JarvisWidget } from '../../components/dashboard/widgets/JarvisWidget';
+import { DailyBriefingWidget } from '../../components/dashboard/widgets/DailyBriefingWidget';
 
 function setTheme(theme: 'light' | 'dark') {
   const root = document.documentElement;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DollarSign, RefreshCw, Loader2, AlertCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Button } from '../../ui/button';
 import { Suspense, lazy } from 'react';
 const BillsModal = lazy(() => import('../BillsModal').then(m => ({ default: m.BillsModal })));
-import { BillsWidgetProps } from '@/types/dashboard';
+import { BillsWidgetProps } from '../../../types/dashboard';
 
 interface Bill {
   id: string;

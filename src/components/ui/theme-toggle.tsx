@@ -1,7 +1,7 @@
 import { Moon, Sun, Monitor, PartyPopper } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { useTheme } from "@/components/providers/ModernThemeProvider"
+import { Button } from "./button"
+import { useTheme } from "../providers/ModernThemeProvider"
 
 export function ThemeToggle() {
   const { setTheme, theme } = useTheme()

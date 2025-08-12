@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { server } from '../mocks/server';
 import { http, HttpResponse } from 'msw';
-import dashboardApi from '@/services/dashboardApi';
+import dashboardApi from '../../services/dashboardApi';
 
 describe('dashboardApi errors', () => {
   beforeEach(() => {

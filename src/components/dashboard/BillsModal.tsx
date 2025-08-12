@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { X, Plus, Edit, Trash2, Calendar, DollarSign, Repeat, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import {
   AlertDialog,
   AlertDialogAction,

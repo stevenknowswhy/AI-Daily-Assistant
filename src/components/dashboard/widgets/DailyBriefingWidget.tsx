@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { RefreshCw, Loader2, Eye, RotateCcw } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Button } from '../../ui/button';
 import { Suspense, lazy } from 'react';
 const DailyBriefingModal = lazy(() => import('../DailyBriefingModal').then(m => ({ default: m.DailyBriefingModal })));
-import { DailyBriefingWidgetProps, BriefingPreview } from '@/types/dashboard';
-import { dailyBriefingService, BriefingData } from '@/services/dailyBriefingService';
+import { DailyBriefingWidgetProps, BriefingPreview } from '../../../types/dashboard';
+import { dailyBriefingService, BriefingData } from '../../../services/dailyBriefingService';
 import toast from 'react-hot-toast';
 
 export const DailyBriefingWidget: React.FC<DailyBriefingWidgetProps> = ({

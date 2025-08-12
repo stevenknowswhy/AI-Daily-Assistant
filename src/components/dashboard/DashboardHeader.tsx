@@ -1,9 +1,9 @@
 import React from 'react';
 import { LogOut, User, Bot } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '../ui/button';
 import { SettingsDropdown } from './SettingsDropdown';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { DashboardHeaderProps } from '@/types/dashboard';
+import { ThemeToggle } from '../ui/theme-toggle';
+import { DashboardHeaderProps } from '../../types/dashboard';
 
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({

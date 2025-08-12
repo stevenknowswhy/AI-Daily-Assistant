@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import dashboardApi from '@/services/dashboardApi';
+import dashboardApi from '../../services/dashboardApi';
 
 describe('dashboardApi', () => {
   it('fetches calendar events from voice endpoint', async () => {

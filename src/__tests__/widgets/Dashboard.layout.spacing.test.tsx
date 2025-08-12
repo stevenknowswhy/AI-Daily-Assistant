@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '../utils/test-utils';
-import { Dashboard } from '@/components/dashboard/Dashboard';
+import { Dashboard } from '../../components/dashboard/Dashboard';
 
 // Mock hooks used by Dashboard to render without external dependencies
 vi.mock('@/contexts/ClerkAuthContext', () => ({

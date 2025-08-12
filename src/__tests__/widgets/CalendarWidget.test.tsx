@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { CalendarWidget } from '@/components/dashboard/widgets/CalendarWidget';
+import { CalendarWidget } from '../../components/dashboard/widgets/CalendarWidget';
 
 vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ success: true, events: []})})));
 

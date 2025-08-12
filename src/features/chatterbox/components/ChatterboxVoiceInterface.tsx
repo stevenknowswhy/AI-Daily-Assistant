@@ -8,9 +8,9 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Mic, MicOff, Volume2, VolumeX, Send, Loader2, Settings } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Button } from '../../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Input } from '../../../components/ui/input';
 import { ChatterboxService } from '../services/ChatterboxService';
 import { VoiceMessage, VoiceInterfaceState, ChatterboxConfig } from '../types/chatterbox.types';
 

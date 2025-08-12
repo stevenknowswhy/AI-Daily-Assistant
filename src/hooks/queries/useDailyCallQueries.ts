@@ -6,7 +6,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys, queryOptions } from '@/lib/queryClient';
+import { queryKeys, queryOptions } from '../../lib/queryClient';
 
 // Types for daily call preferences
 export interface DailyCallPreferences {

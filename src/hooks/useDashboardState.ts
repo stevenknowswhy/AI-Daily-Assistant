@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { DashboardState, DashboardActions, ConnectionStatus, AuthStatus } from '@/types/dashboard';
+import { DashboardState, DashboardActions, ConnectionStatus, AuthStatus } from '../types/dashboard';
 
 const initialConnectionStatus: ConnectionStatus = {
   calendar: false,

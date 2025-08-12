@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { dailyCallPreferencesService } from '@/services/dailyCallPreferences';
+import { dailyCallPreferencesService } from '../../services/dailyCallPreferences';
 
 const mockFetch = vi.fn();
 

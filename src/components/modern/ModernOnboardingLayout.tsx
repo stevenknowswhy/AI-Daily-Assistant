@@ -1,6 +1,6 @@
 import React from 'react';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
+import { Progress } from '../ui/progress';
+import { Button } from '../ui/button';
 import { ArrowLeft, ArrowRight, X } from 'lucide-react';
 
 interface ModernOnboardingLayoutProps {

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, User, CreditCard, Settings, Plug, Bot, Calendar, Mail, FileText, Clock, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
+import { Button } from '../ui/button';
+import { Switch } from '../ui/switch';
 import toast from 'react-hot-toast';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useTheme } from '@/components/providers/ModernThemeProvider';
-import { useAgentSettings } from '@/contexts/AgentSettingsContext';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { useTheme } from '../providers/ModernThemeProvider';
+import { useAgentSettings } from '../../contexts/AgentSettingsContext';
 
 interface SettingsModalProps {
   isOpen: boolean;

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { Button } from '@/components/ui/button';
+import { Button } from '../../ui/button';
 import { Switch } from '../../ui/switch';
 
 // Enhanced validation schema for all Daily Call preferences

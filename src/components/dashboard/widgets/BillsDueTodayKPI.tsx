@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, DollarSign, AlertCircle, Loader2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Badge } from '../../ui/badge';
 import toast from 'react-hot-toast';
 
 interface Bill {

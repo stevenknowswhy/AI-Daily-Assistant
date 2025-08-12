@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '../utils/test-utils';
-import { DailyCallWidgetV2 } from '@/components/dashboard/widgets/DailyCallWidgetV2';
+import { DailyCallWidgetV2 } from '../../components/dashboard/widgets/DailyCallWidgetV2';
 
 // MSW will handle all fetch requests with proper mocking
 

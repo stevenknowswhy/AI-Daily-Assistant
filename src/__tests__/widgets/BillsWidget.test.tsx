@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { BillsWidget } from '@/components/dashboard/widgets/BillsWidget';
+import { BillsWidget } from '../../components/dashboard/widgets/BillsWidget';
 
 vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ([])})));
 

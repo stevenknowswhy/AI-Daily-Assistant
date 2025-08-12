@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { EmailWidget } from '@/components/dashboard/widgets/EmailWidget';
+import { EmailWidget } from '../../components/dashboard/widgets/EmailWidget';
 
 vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ success: true, messages: []})})));
 
