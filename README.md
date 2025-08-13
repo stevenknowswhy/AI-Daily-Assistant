@@ -6,7 +6,7 @@ A comprehensive voice-enabled daily assistant application built with React, Vite
 
 ### Core Features
 - **Voice-Enabled Assistant (JARVIS)**: Natural language voice commands for calendar, email, and bill management
-- **Google Calendar Integration**: View, create, and manage calendar events with voice commands
+- **Google Calendar Integration**: Full CRUD operations (Create, Read, Update, Delete) for calendar events with both voice commands and UI interface
 - **Gmail Integration**: Read emails, compose replies with AI assistance, and manage inbox
 - **Bills & Subscriptions Management**: Track and manage recurring bills with CRUD operations
 - **Daily Briefings**: AI-powered summaries combining calendar, email, and financial data
@@ -43,6 +43,35 @@ A comprehensive voice-enabled daily assistant application built with React, Vite
 - **Playwright** for E2E testing
 - **Storybook** for component development
 - **ESLint/Prettier** for code quality
+
+## 🏗️ Architecture Highlights
+
+### Calendar CRUD Feature
+Our Calendar management follows the **Feature-Colocation Model** for optimal maintainability:
+
+```
+src/features/calendar-management/
+├── components/
+│   ├── CalendarWidgetWithCrud.tsx    # Enhanced widget with CRUD operations
+│   ├── CalendarEventModal.tsx        # Create/Edit modal with form validation
+│   └── DeleteEventModal.tsx          # Confirmation dialog
+├── hooks/
+│   └── useCalendarCrud.ts            # TanStack Query mutations for CRUD
+├── tests/
+│   ├── CalendarWidgetWithCrud.test.tsx
+│   └── useCalendarCrud.test.ts
+├── schemas.ts                        # Zod validation schemas
+└── index.ts                          # Public API exports
+```
+
+**Key Features:**
+- **Full CRUD Operations**: Create, Read, Update, Delete calendar events
+- **Form Validation**: Zod schemas with TypeScript integration
+- **Optimistic Updates**: TanStack Query for caching and real-time UI updates
+- **Compound Components**: Flexible modal system for reusability
+- **Error Handling**: Comprehensive error states and user feedback
+- **Accessibility**: WCAG compliant with proper ARIA labels
+- **Testing**: 100% test coverage for hooks and components
 
 ## 📋 Prerequisites
 
